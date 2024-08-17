@@ -69,6 +69,6 @@ git checkout -b feature/ваша_функция
 [GitHub репозиторий](https://github.com/userMurder/UserBotTelegram)
 
 Контакты
-[Telegram ](t.me/dev_paketik)- Связь с разработчиком
+[Telegram ](https://t.me/dev_paketik)- Связь с разработчиком
 Лицензия
 Этот проект лицензирован под MIT лицензией.
