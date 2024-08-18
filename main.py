@@ -1,3 +1,5 @@
+import time
+
 from aiocryptopay import AioCryptoPay, Networks
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
@@ -9,6 +11,7 @@ import random
 import sqlite3
 import config
 from datetime import datetime, timedelta
+import keyboard
 
 # Настройки бота
 API_TOKEN = config.API_TOKEN
@@ -120,22 +123,7 @@ async def send_welcome(message: Message):
     else:
         await message.answer("Вы уже зарегистрированы в казино.")
 
-    balance_button = KeyboardButton(text="💰 Баланс")
-    play_button = KeyboardButton(text="🎮 Играть")
-    deposit_button = KeyboardButton(text="💳 Пополнить")
-    withdraw_button = KeyboardButton(text="🏦 Вывод")
-    refferal_button = KeyboardButton(text="🎉Рефералы")
-
-    markup = ReplyKeyboardMarkup(
-        keyboard=[
-            [balance_button, play_button],
-            [deposit_button, withdraw_button],
-            [refferal_button]
-        ],
-        resize_keyboard=True
-    )
-
-    await message.answer("Выберите действие:", reply_markup=markup)
+    await message.answer("Выберите действие:", reply_markup=keyboard.main_menu_markup)
 
 
 # Команда /balance для проверки баланса
@@ -290,9 +278,9 @@ async def play_game(message: types.Message):
 
     if user and user[0] >= 1:
         markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Чет/Нечет", callback_data="mode_even_odd")],
-            [InlineKeyboardButton(text="Больше/Меньше", callback_data="mode_higher_lower")],
-            [InlineKeyboardButton(text="Шкатулки", callback_data="mode_boxes")]
+            [InlineKeyboardButton(text="🎲 Чет/Нечет", callback_data="mode_even_odd")],
+            [InlineKeyboardButton(text="🔼 Больше/Меньше", callback_data="mode_higher_lower")],
+            [InlineKeyboardButton(text="📦 Коробки", callback_data="mode_boxes")]
         ])
         await message.answer("🕹️ Объяснение игры - /help \nВыберите режим игры:", reply_markup=markup)
     else:
@@ -315,25 +303,31 @@ async def choose_game_mode(callback_query: CallbackQuery):
 
     if game_mode == "even_odd":
         await callback_query.message.edit_text("Вы выбрали режим: Чет/Нечет. 🎲")
+        time.sleep(1)
     elif game_mode == "higher_lower":
         await callback_query.message.edit_text("Вы выбрали режим: Больше/Меньше. 🎲")
+        time.sleep(1)
     elif game_mode == "boxes":
-        await callback_query.message.edit_text("Вы выбрали режим: Шкатулки. 📦")
+        await callback_query.message.edit_text("Вы выбрали режим: Коробки. 📦")
+        time.sleep(1)
+
         markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="💵 1 USDT", callback_data=f"stake_1_{game_mode}")],
-            [InlineKeyboardButton(text="💰 10 USDT", callback_data=f"stake_10_{game_mode}")],
-            [InlineKeyboardButton(text="💸 500 USDT", callback_data=f"stake_500_{game_mode}")],
-            [InlineKeyboardButton(text="🤑 1000 USDT", callback_data=f"stake_1000_{game_mode}")],
-            [InlineKeyboardButton(text="💴 5000 USDT", callback_data=f"stake_5000_{game_mode}")]
+            [InlineKeyboardButton(text="💵 1 $", callback_data=f"stake_1_{game_mode}")],
+            [InlineKeyboardButton(text="💰 10 $", callback_data=f"stake_10_{game_mode}")],
+            [InlineKeyboardButton(text="💸 100 $", callback_data=f"stake_100_{game_mode}")],
+            [InlineKeyboardButton(text="🤑 500 $", callback_data=f"stake_500_{game_mode}")],
+            [InlineKeyboardButton(text="💴 1000 $", callback_data=f"stake_1000_{game_mode}")],
+            [InlineKeyboardButton(text="💰 5000 $", callback_data=f"stake_5000_{game_mode}")]
         ])
         await callback_query.message.edit_text("Выберите сумму ставки:", reply_markup=markup)
     else:
         markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="💵 1 USDT", callback_data=f"stake_1_{game_mode}")],
-            [InlineKeyboardButton(text="💰 10 USDT", callback_data=f"stake_10_{game_mode}")],
-            [InlineKeyboardButton(text="💸 500 USDT", callback_data=f"stake_500_{game_mode}")],
-            [InlineKeyboardButton(text="🤑 1000 USDT", callback_data=f"stake_1000_{game_mode}")],
-            [InlineKeyboardButton(text="💴 5000 USDT", callback_data=f"stake_5000_{game_mode}")]
+            [InlineKeyboardButton(text="💵 1 $", callback_data=f"stake_1_{game_mode}")],
+            [InlineKeyboardButton(text="💰 10 $", callback_data=f"stake_10_{game_mode}")],
+            [InlineKeyboardButton(text="💸 100 $", callback_data=f"stake_100_{game_mode}")],
+            [InlineKeyboardButton(text="🤑 500 $", callback_data=f"stake_500_{game_mode}")],
+            [InlineKeyboardButton(text="💴 1000 $", callback_data=f"stake_1000_{game_mode}")],
+            [InlineKeyboardButton(text="💰 5000 $", callback_data=f"stake_5000_{game_mode}")]
         ])
         await callback_query.message.edit_text("Выберите сумму ставки:", reply_markup=markup)
 
@@ -367,7 +361,7 @@ async def choose_stake(callback_query: CallbackQuery):
             [InlineKeyboardButton(text="🎲 Кинуть кубик", callback_data=f"play_{stake_amount}_{game_mode}")]
         ])
         await callback_query.message.edit_text(
-            f"💰 Ставка: {stake_amount} USDT. Нажмите кнопку ниже, чтобы кинуть кубик:",
+            f"💰 Ставка: {stake_amount} $. Нажмите кнопку ниже, чтобы кинуть кубик:",
             reply_markup=markup)
 
 
@@ -574,7 +568,7 @@ async def process_withdrawal(message: types.Message, percentage: int):
                                                     spend_id=str(uuid.uuid4()))
 
                 # Отправка сообщения пользователю
-                await message.answer(f"🏦 Средства в размере {amount:.2f} USDT были успешно отправлены вам.")
+                await message.answer(f"🏦 Средства в размере {amount:.2f} USDT были успешно отправлены вам.", reply_markup=keyboard.main_menu_markup)
 
                 # Логирование действия
                 log_action(user_id, "Withdraw", amount)
@@ -585,14 +579,14 @@ async def process_withdrawal(message: types.Message, percentage: int):
                 # В случае недостатка средств у бота не списываем средства с базы данных
                 invoice = await cryptopay.create_invoice(asset='USDT', amount=amount - usdt_balance)
                 await message.answer("🚫 На счету приложения недостаточно средств для проведения операции.",
-                                     reply_markup=types.ReplyKeyboardRemove())
+                                     reply_markup=keyboard.main_menu_markup)
                 await notify_admins(f"🏦 ПОПОЛНИ СУКА КАЗНУ!!! \n"
                                     f"НА КАЗНЕ {round(usdt_balance, 1)} USDT\n"
                                     f"Не хватает {round(amount - usdt_balance, 1)} USDT\n"
                                     f"{invoice.mini_app_invoice_url}")
         else:
             await message.answer("🚫 На вашем балансе недостаточно средств для вывода.",
-                                 reply_markup=types.ReplyKeyboardRemove())
+                                 reply_markup=keyboard.main_menu_markup)
     else:
         await message.answer("Вы не зарегистрированы. Используйте /start для регистрации.",
                              reply_markup=types.ReplyKeyboardRemove())
@@ -625,7 +619,10 @@ async def show_users(callback_query: types.CallbackQuery):
         cursor.execute("SELECT * FROM users")
         users = cursor.fetchall()
         user_list = "\n".join([f"User ID: {user[0]}, Balance: {user[1]} USDT" for user in users])
-        await callback_query.answer(f"📄 Список всех пользователей:\n\n{user_list}")
+        await bot.send_message(admin_id, f"📄 Список всех пользователей:\n\n{user_list}")
+        await callback_query.answer("💰 Сообщение с информацией отправлено в лс.")
+    else:
+        await callback_query.answer("🚫 У вас нет прав доступа к админ-панели.")
     await callback_query.answer()
 
 
@@ -665,7 +662,10 @@ async def casino_stats(callback_query: types.CallbackQuery):
             f"💸 Всего выводов: {total_withdrawals:.2f} USDT\n\n"
             f"💸 Баланс казино: {usdt_balance:.2f} $"
         )
-        await callback_query.answer(message)
+        await bot.send_message(admin_id, message)
+        await callback_query.answer("💰 Сообщение с информацией отправлено в лс.")
+    else:
+        await callback_query.answer("🚫 У вас нет прав доступа к админ-панели.")
     await callback_query.answer()
 
 
@@ -680,7 +680,7 @@ async def replenish_treasure(callback_query: types.CallbackQuery):
             [InlineKeyboardButton(text="🏦 Пополнить на 10000 USDT", callback_data="replenish_10000")]
         ])
 
-        await callback_query.answer("💰 Выберите сумму для пополнения казны:", reply_markup=markup)
+        await bot.send_message(admin_id, "💰 Выберите сумму для пополнения казны:", reply_markup=markup)
 
 
 @dp.callback_query(lambda c: c.data.startswith("replenish_"))
@@ -708,6 +708,7 @@ async def process_replenish(callback_query: types.CallbackQuery):
             await bot.send_message(admin_id, "🚫 На счету приложения недостаточно средств для проведения операции.")
             invoice = await cryptopay.create_invoice(asset='USDT', amount=amount - usdt_balance)
             await bot.send_message(admin_id, f"🔗 Счёт для пополнения казны:\n{invoice.mini_app_invoice_url}")
+
 
     await callback_query.answer()
 
