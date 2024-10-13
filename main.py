@@ -259,7 +259,6 @@ async def process_deposit(callback_query: CallbackQuery):
     await callback_query.answer()
 
 
-image_paths = config.image_paths
 ####################НАЧАЛО
 # Команда /play для выбора режима игры
 user_game_status = {}
